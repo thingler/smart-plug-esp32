@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/event_groups.h"
+#include "esp_log.h"
+
+#include "nvs_flash.h"
+#include "driver/gpio.h"
+
+#include "init_wifi.h"
+#include "handle_aws_iot.h"
+
+static const char *TAG = "main";
+static char *topic = CONFIG_AWS_IOT_TOPIC;
+
+#define GPIO_SWITCH 33
+
+static void subCallBack(char *message) {
+    const char switchOn[] = "on";
+    const char switchOff[] = "off";
+    
+    if (strcmp(message,switchOn) == 0) {
+        ESP_LOGI(TAG, "Turning switch on");
+        gpio_set_level(GPIO_SWITCH, true);
+    }
+    if (strcmp(message,switchOff) == 0) {
+        ESP_LOGI(TAG, "Turning switch off");
+        gpio_set_level(GPIO_SWITCH, false);
+    }
+}
+
+static void aws_iot_task(void *param)
+{
+    connectIOT();
+    subscribeIOT(&subCallBack, topic);
+}
+
+void app_main()
+{
+    // Initialize NVS.
+    esp_err_t err = nvs_flash_init();
+    if (err == ESP_ERR_NVS_NO_FREE_PAGES) {
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        err = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK( err );
+
+    // Configure switch
+    gpio_pad_select_gpio(GPIO_SWITCH);
+    // set the correct direction
+    gpio_set_direction(GPIO_SWITCH, GPIO_MODE_OUTPUT);
+    // Turn swich off
+    gpio_set_level(GPIO_SWITCH, false);
+
+    init_wifi();
+    xTaskCreatePinnedToCore(&aws_iot_task, "aws_iot_task", 9216, NULL, 5, NULL, 1);
+    publishIOT((char *) "Thing is connected", topic);
+}

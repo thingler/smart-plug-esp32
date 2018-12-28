@@ -1,0 +1,14 @@
+# VS Code Idea
+.vscode/
+
+# Build
+build/
+
+# IOT Certs
+main/certs/*.pem
+main/certs/*.crt
+main/certs/*.key
+
+# SDK Configurations
+sdkconfig
+sdkconfig.old
