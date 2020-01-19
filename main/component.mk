@@ -14,3 +14,10 @@ $(COMPONENT_PATH)/certs/certificate.pem.crt $(COMPONENT_PATH)/certs/private.pem.
 	exit 1
 endif
 endif
+
+COMPONENT_ADD_INCLUDEDIRS := ../../esp-aws-iot/port/include ../../esp-aws-iot/aws-iot-device-sdk-embedded-C/include
+
+COMPONENT_SRCDIRS := ../../esp-aws-iot/aws-iot-device-sdk-embedded-C/src ../../esp-aws-iot/port
+
+# Check the submodule is initialised
+COMPONENT_SUBMODULES := aws-iot-device-sdk-embedded-C
