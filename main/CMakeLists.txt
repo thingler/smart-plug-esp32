@@ -1,5 +1,4 @@
 set(COMPONENT_SRCS "main.c"
-                   "dcdc.c"
                    "handle_aws_iot.c"
                    "init_wifi.c")
 set(COMPONENT_ADD_INCLUDEDIRS ".")
