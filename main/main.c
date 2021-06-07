@@ -16,7 +16,7 @@
 static const char *TAG = "main";
 static char *topic = CONFIG_AWS_IOT_TOPIC;
 
-#define GPIO_SWITCH 9
+#define GPIO_SWITCH 33
 
 static void subCallBack(char *message) {
     const char switchOn[] = "on";

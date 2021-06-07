@@ -14,6 +14,8 @@
 
 static const char *TAG = "subpub";
 
+static bool mqtt_bussy = false;
+
 extern const uint8_t aws_root_ca_pem_start[] asm("_binary_aws_root_ca_pem_start");
 extern const uint8_t aws_root_ca_pem_end[] asm("_binary_aws_root_ca_pem_end");
 extern const uint8_t certificate_pem_crt_start[] asm("_binary_certificate_pem_crt_start");
@@ -79,7 +81,12 @@ void publishIOT(char *message, char *topic) {
     params.payloadLen = strlen(message);
 
     do {
-        rc = aws_iot_mqtt_publish(&client, topic, TOPIC_LEN, &params);
+        if (mqtt_bussy == false) {
+            mqtt_bussy = true;
+            rc = aws_iot_mqtt_publish(&client, topic, TOPIC_LEN, &params);
+            mqtt_bussy = false;
+        }
+        
         if(SUCCESS != rc) {
             vTaskDelay(1000 / portTICK_RATE_MS);
         }
@@ -101,9 +108,11 @@ void subscribeIOT(void (*subCallBack)(char *), char *topic) {
     }
 
     while((NETWORK_ATTEMPTING_RECONNECT == rc || NETWORK_RECONNECTED == rc || SUCCESS == rc)) {
-        //Max time the yield function will wait for read messages
-        rc = aws_iot_mqtt_yield(&client, 100);
-
+        if (mqtt_bussy == false) {
+            mqtt_bussy = true;
+            rc = aws_iot_mqtt_yield(&client, 100);
+            mqtt_bussy = false;
+        }
         //ESP_LOGI(TAG, "Stack remaining for task '%s' is %d bytes", pcTaskGetTaskName(NULL), uxTaskGetStackHighWaterMark(NULL));
         vTaskDelay(1000 / portTICK_RATE_MS);
     }
