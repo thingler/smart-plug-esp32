@@ -20,11 +20,11 @@ config MAXIMUM_RETRY
     help
         Set the Maximum retry to avoid station reconnecting to the AP unlimited when the AP is really inexistent.
 
-config AWS_EXAMPLE_CLIENT_ID
-    string "AWS IoT Client ID"
-    default "smartplug"
+config AWS_CLIENT_ID
+    string "Host name and AWS IoT Client ID"
+    default "thingler-smartplug-1"
     help
-        AWS IoT Client ID for the example. Should be unique for every device.
+        Hostname and AWS IoT Client ID for the example. Should be unique for every device.
 
 config AWS_IOT_TOPIC
     string "AWS IoT Topic for sub/pub"

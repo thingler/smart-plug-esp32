@@ -156,8 +156,8 @@ void connectIOT(void)
     connectParams.isCleanSession = true;
     connectParams.MQTTVersion = MQTT_3_1_1;
     /* Client ID is set in the menuconfig of the example */
-    connectParams.pClientID = CONFIG_AWS_EXAMPLE_CLIENT_ID;
-    connectParams.clientIDLen = (uint16_t) strlen(CONFIG_AWS_EXAMPLE_CLIENT_ID);
+    connectParams.pClientID = CONFIG_AWS_CLIENT_ID;
+    connectParams.clientIDLen = (uint16_t) strlen(CONFIG_AWS_CLIENT_ID);
     connectParams.isWillMsgPresent = false;
 
     ESP_LOGI(TAG, "Connecting to AWS...");
